@@ -8,6 +8,9 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
+PYTHON_LIB = python3.6m
+PYTHON_INC = /usr/include/$$PYTHON_LIB
+
 TARGET = control
 TEMPLATE = app
 
@@ -25,10 +28,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    run_thread.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    run_thread.h
 
 FORMS += \
         mainwindow.ui
+
+LIBS += -lqscintilla2_qt5 -l$$PYTHON_LIB
+LIBS += -lPythonQt-Qt5-Python3
+INCLUDEPATH += $$PYTHON_INC
