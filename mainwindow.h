@@ -17,9 +17,12 @@
 #include <QDebug>
 #include <QThread>
 #include <QMessageBox>
+#include <QVector>
+#include <QToolTip>
 
 #include <Qsci/qscilexerpython.h>
 #include <Qsci/qsciscintilla.h>
+#include <Qsci/qsciapis.h>
 
 #include "run_thread.h"
 
@@ -57,17 +60,21 @@ private:
     threadParams tP;
     run_thread *thread;
 
+    QVector<QString> commandList;
+    QVector<QString> helpAboutCommandList;
+
 private slots:
     void slot_pushButtonRun();
     void slot_doubleClicOnList();
     void slot_consoleOut(QString);
+    void slot_consoleErr(QString);
+    void slot_setToolTipList();
     void slot_thread_end();
     void on_actionOpen_python_script_triggered();
     void on_actionSave_python_script_triggered();
     void on_actionSave_as_triggered();
     void on_actionNew_triggered();
     void on_actionE_xit_triggered();
-
 
     void on_actionAbout_triggered();
 

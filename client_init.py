@@ -20,4 +20,12 @@ def motion_detector_z(pos):
     print("detector move to "+str(pos))
     return
 
+def begin_measuring(value):
+
+    sleep(value)
+    return
+
 init()
+
+# EOF
+

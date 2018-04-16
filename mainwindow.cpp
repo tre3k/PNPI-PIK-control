@@ -13,10 +13,30 @@ MainWindow::MainWindow(QWidget *parent) :
     listWidgetCommands = new QListWidget;
     lineEditSearch = new QLineEdit;
 
+    /* read config */
+    commandList.append("for i in range(start,end):");
+    commandList.append("sleep(sec)");
+    commandList.append("print(asctime())");
+    commandList.append("print(\"var = \"+str(var))");
+    commandList.append("motion_detector_z(pos)");
+    commandList.append("while");
+
+    helpAboutCommandList.append("simple loop, where \"i\" range from start to end");
+    helpAboutCommandList.append("delay of sec");
+    helpAboutCommandList.append("print current date");
+    helpAboutCommandList.append("print variable");
+    helpAboutCommandList.append("move detector ");
+    helpAboutCommandList.append("loop while condition is true");
+
+    /* ====== */
 
     textEdit->setUtf8(true);
     QsciLexerPython *lexerPy = new QsciLexerPython(this);
     lexerPy->setFont(QFont("monofur",12));
+    QsciAPIs *apis = new QsciAPIs(lexerPy);
+    for(int i=0;i<commandList.count();i++) apis->add(commandList.at(i));
+    apis->prepare();
+    lexerPy->setAPIs(apis);
     textEdit->setLexer(lexerPy);
 
     textEdit->setAutoIndent(true);
@@ -32,7 +52,7 @@ MainWindow::MainWindow(QWidget *parent) :
     textEdit->setAutoCompletionCaseSensitivity(true);
     textEdit->setAutoCompletionReplaceWord(true);
     textEdit->setAutoCompletionUseSingle(QsciScintilla::AcusAlways);
-    textEdit->setAutoCompletionThreshold(0);
+    textEdit->setAutoCompletionThreshold(1);
 
     textEdit->setBraceMatching(QsciScintilla::SloppyBraceMatch);
     textEdit->setMatchedBraceBackgroundColor(Qt::yellow);
@@ -84,21 +104,20 @@ MainWindow::MainWindow(QWidget *parent) :
             this,SLOT(slot_pushButtonRun()));
     connect(listWidgetCommands,SIGNAL(doubleClicked(QModelIndex)),
             this,SLOT(slot_doubleClicOnList()));
+    connect(listWidgetCommands,SIGNAL(clicked(QModelIndex)),
+            this,SLOT(slot_setToolTipList()));
 
-    listWidgetCommands->addItem("for i in range(0,10):");
-    listWidgetCommands->addItem("sleep(1)");
-    listWidgetCommands->addItem("print(asctime())");
-    listWidgetCommands->addItem("motion_detector_z(pos)");
 
-    //PythonQt::init();
-    //tP.mainModule = PythonQt::self()->getMainModule();
+    for(int i=0;i<commandList.count();i++){
+        listWidgetCommands->addItem(commandList.at(i));
+    }
 
     thread = new run_thread();
 
     connect(this,SIGNAL(signal_sendParams(threadParams)),
             thread,SLOT(slot_reciveParams(threadParams)));
     connect(thread,SIGNAL(signal_errText(QString)),
-            this,SLOT(slot_consoleOut(QString)));
+            this,SLOT(slot_consoleErr(QString)));
     connect(thread,SIGNAL(signal_outText(QString)),
             this,SLOT(slot_consoleOut(QString)));
     connect(thread,SIGNAL(finished()),
@@ -190,7 +209,13 @@ void MainWindow::on_actionE_xit_triggered()
 void MainWindow::slot_consoleOut(QString str){
     str.replace('\n',' ');
     if(str == ' ') return;
-    outText->appendPlainText(str);
+    outText->appendHtml("<font color=\"black\">"+str+"</font>");
+}
+
+void MainWindow::slot_consoleErr(QString str){
+    str.replace('\n',' ');
+    if(str == ' ') return;
+    outText->appendHtml("<font color=\"red\">"+str+"</font>");
 }
 
 void MainWindow::slot_thread_end(){
@@ -200,4 +225,16 @@ void MainWindow::slot_thread_end(){
 void MainWindow::on_actionAbout_triggered()
 {
     QMessageBox::about(0,"About","PNPI (c) 2018");
+}
+
+void MainWindow::slot_setToolTipList(){
+    int index;
+    for(index=0;index<listWidgetCommands->count();index++){
+        if(listWidgetCommands->item(index)->isSelected()) break;
+    }
+    if(index>=helpAboutCommandList.count()) return;
+    QString toolTipText = commandList.at(index)+" - "+
+            helpAboutCommandList.at(index);
+    listWidgetCommands->setToolTip(toolTipText);
+    QToolTip::showText(QCursor::pos(),toolTipText);
 }

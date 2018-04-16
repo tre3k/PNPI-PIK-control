@@ -11,8 +11,6 @@ void run_thread::run()
             this,SLOT(slot_errText(QString)));
     connect(PythonQt::self(),SIGNAL(pythonStdOut(QString)),
             this,SLOT(slot_outText(QString)));
-    connect(PythonQt::self(),SIGNAL(objectNameChanged(QString)),
-            this,SLOT(slot_outText(QString)));
 
     if(mainModule.isNull()){
         qDebug () << "ERROR! run PythonQt mainModule";
@@ -24,8 +22,6 @@ void run_thread::run()
     disconnect(PythonQt::self(),SIGNAL(pythonStdErr(QString)),
             this,SLOT(slot_errText(QString)));
     disconnect(PythonQt::self(),SIGNAL(pythonStdOut(QString)),
-            this,SLOT(slot_outText(QString)));
-    disconnect(PythonQt::self(),SIGNAL(objectNameChanged(QString)),
             this,SLOT(slot_outText(QString)));
     return;
 }
