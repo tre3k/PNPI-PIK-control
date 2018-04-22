@@ -8,7 +8,8 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-PYTHON_LIB = python3.6m
+#PYTHON_LIB = python3.6m
+PYTHON_LIB = python2.7
 PYTHON_INC = /usr/include/$$PYTHON_LIB
 
 TARGET = control
@@ -39,5 +40,9 @@ FORMS += \
         mainwindow.ui
 
 LIBS += -lqscintilla2_qt5 -l$$PYTHON_LIB
-LIBS += -lPythonQt-Qt5-Python3
+#LIBS += -lPythonQt-Qt5-Python3
+LIBS += -lQt5Python27
+
 INCLUDEPATH += $$PYTHON_INC
+
+INCLUDEPATH += /usr/include/Qt5Python27

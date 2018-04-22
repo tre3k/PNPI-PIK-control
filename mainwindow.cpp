@@ -61,6 +61,8 @@ MainWindow::MainWindow(QWidget *parent) :
     textEdit->setCaretLineBackgroundColor(QColor("#eeeeee"));
     textEdit->setCaretLineVisible(true);
 
+    textEdit->setToolTip("Write here your experement code");
+
 
     buttonRun = new QPushButton(labelButtonRun);
     buttonTest = new QPushButton(labelButtonTest);
